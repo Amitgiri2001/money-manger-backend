@@ -10,6 +10,6 @@ public class HealthController {
 
 	@GetMapping("/health")
 	public String checkHealth() {
-		return "Finance Tracker Backend Running";
+		return "Money Manager Backend Running";
 	}
 }

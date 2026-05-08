@@ -11,6 +11,8 @@ public class UserResponseDto {
 	private Long id;
 	private String name;
 	private String email;
+	private Boolean isDeleted;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
+	private LocalDateTime deletedAt;
 }

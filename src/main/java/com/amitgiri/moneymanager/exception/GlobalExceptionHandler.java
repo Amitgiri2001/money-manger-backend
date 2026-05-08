@@ -20,6 +20,13 @@ public class GlobalExceptionHandler {
 		ApiResponse<Object> response = new ApiResponse<>(false, ex.getMessage(), null);
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
 	}
+	
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ApiResponse<Object>> handleResourceNotFoundException(ResourceNotFoundException ex) {
+		// log ex.getStackStrace
+		ApiResponse<Object> response = new ApiResponse<>(false, ex.getMessage(), null);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ApiResponse<Map<String,String>>> handleValidationException(MethodArgumentNotValidException ex) {

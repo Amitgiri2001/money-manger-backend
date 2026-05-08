@@ -3,6 +3,8 @@ package com.amitgiri.moneymanager.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,21 @@ public class UserController {
 		UserResponseDto resDto=userService.createUser(dto);
 		ApiResponse<UserResponseDto> apiRes=new ApiResponse<>(true,"User created successfully",resDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(apiRes);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<ApiResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
+		//call service layer for create the user
+		UserResponseDto resDto=userService.getUserById(id);
+		ApiResponse<UserResponseDto> apiRes=new ApiResponse<>(true,"User fetched successfully",resDto);
+		return ResponseEntity.status(HttpStatus.OK).body(apiRes);
+	}
+	
+	@GetMapping("/all")
+	public ResponseEntity<ApiResponse<UserResponseDto[]>> getAllUser() {
+		//call service layer for create the user
+		UserResponseDto[] resDto=userService.getAllUsers();
+		ApiResponse<UserResponseDto[]> apiRes=new ApiResponse<>(true,"All user fetched successfully",resDto);
+		return ResponseEntity.status(HttpStatus.OK).body(apiRes);
 	}
 }

@@ -6,5 +6,7 @@ import com.amitgiri.moneymanager.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	public boolean existsByEmail(String email);
+
+	public User findByIdAndDeletedFalse(Long id);
 	
 }

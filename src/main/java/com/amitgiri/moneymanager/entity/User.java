@@ -33,7 +33,7 @@ public class User {
 	private String password;
 	
 	@Column(nullable=false)
-	private Boolean isDeleted=false;
+	private Boolean deleted=false;
 	
 	@Column(nullable=true)
 	private LocalDateTime deletedAt;

@@ -39,15 +39,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public UserResponseDto getUserById(Long id) {
-		User user = userRepo.findById(id)
-				.orElseThrow(() -> (new ResourceNotFoundException("User not found with id : " + id)));
+		User user = getActiveUserOrThrow(id);
 
 		return mapToUserResDto(user);
 	}
 
 	public UserResponseDto updateUserById(Long id,UpdateUserDto dto) {
-		User user = userRepo.findById(id)
-				.orElseThrow(() -> (new ResourceNotFoundException("User not found with id : " + id)));
+		User user = getActiveUserOrThrow(id);
 		
 		if(dto.getName()!=null)
 			user.setName(dto.getName());
@@ -63,11 +61,10 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public UserResponseDto deleteUserById(Long id) {
-		User user = userRepo.findById(id)
-				.orElseThrow(() -> (new ResourceNotFoundException("User not found with id : " + id)));
+		User user = getActiveUserOrThrow(id);
 		
 		//userRepo.delete(user);
-		user.setIsDeleted(true);
+		user.setDeleted(true);
 		user.setDeletedAt(LocalDateTime.now());
 		User updatedUser=userRepo.save(user);
 		return mapToUserResDto(updatedUser);
@@ -86,11 +83,27 @@ public class UserServiceImpl implements UserService {
 		dto.setId(user.getId());
 		dto.setName(user.getName());
 		dto.setEmail(user.getEmail());
-		dto.setIsDeleted(user.getIsDeleted());
+		dto.setIsDeleted(user.getDeleted());
 		dto.setCreatedAt(user.getCreatedAt());
 		dto.setUpdatedAt(user.getUpdatedAt());
 		dto.setDeletedAt(user.getDeletedAt());
 		return dto;
+	}
+	@Override
+	public User getActiveUserOrThrow(Long id) {
+
+	    User user =userRepo.findById(id)
+	            .orElseThrow(() ->
+	                    new ResourceNotFoundException(
+	                            "User not found with id : " + id
+	                    )
+	            );
+	    if(user.getDeleted()) {
+	    	throw new ResourceNotFoundException(
+                    "User already deleted with id : " + id
+            );
+	    }
+	    return user;
 	}
 	
 }

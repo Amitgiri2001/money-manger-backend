@@ -51,7 +51,7 @@ public class UserController {
 	public ResponseEntity<ApiResponse<UserResponseDto>> deleteUserById(@PathVariable Long id) {
 		UserResponseDto resDto=userService.deleteUserById(id);
 		ApiResponse<UserResponseDto> apiRes=new ApiResponse<>(true,"User deleted successfully",resDto);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(apiRes);
+		return ResponseEntity.status(HttpStatus.OK).body(apiRes);
 	}
 	
 	@GetMapping("/all")

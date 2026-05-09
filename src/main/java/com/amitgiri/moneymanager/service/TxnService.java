@@ -2,11 +2,14 @@ package com.amitgiri.moneymanager.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.amitgiri.moneymanager.dto.MonthlyAnalyticsDto;
+import com.amitgiri.moneymanager.dto.TxnFilterDto;
 import com.amitgiri.moneymanager.dto.TxnRequestDto;
 import com.amitgiri.moneymanager.dto.TxnResponseDto;
 import com.amitgiri.moneymanager.dto.UpdateTxnDto;
@@ -21,17 +24,11 @@ public interface TxnService {
 
 	void deleteTxn(Long id);
 
+	Page<TxnResponseDto> searchTransactions(Long userId, TxnFilterDto filter, Pageable pageable);
 
-	Page<TxnResponseDto> getAllTransaction(Long userId, Pageable pageable);
+	MonthlyAnalyticsDto getMonthlyAnalytics(Long userId, YearMonth month);
 
-	Page<TxnResponseDto> getTransactionByDateRange(Long userId, LocalDate sDate, LocalDate eDate, Pageable pageable);
 
-	Page<TxnResponseDto> getTransactionByCategory(Long userId, TransactionCategory cat, Pageable pageable);
-
-	Page<TxnResponseDto> getTransactionByType(Long userId, TransactionType tType, Pageable pageable);
-
-	Page<TxnResponseDto> getTransactionByAmountRange(Long userId, BigDecimal min, BigDecimal max, Pageable pageable);
-
-	Page<TxnResponseDto> getTransactionByNote(Long id, String keyword, Pageable pageable);
+	
 
 }

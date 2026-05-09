@@ -1,30 +1,43 @@
 package com.amitgiri.moneymanager.repository;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import com.amitgiri.moneymanager.entity.Txn;
-import com.amitgiri.moneymanager.enums.TransactionCategory;
-import com.amitgiri.moneymanager.enums.TransactionType;
 
-public interface TxnRepository extends JpaRepository<Txn,Long> {
+public interface TxnRepository extends JpaRepository<Txn, Long>, JpaSpecificationExecutor<Txn> {
 
+	Page<Txn> findAll(Specification<Txn> spec, Pageable pageable);
 
-	Page<Txn> findAllByUserIdAndTimeBetween(Long userId, LocalDateTime sTime,LocalDateTime eTime,Pageable pageable);
+	// analytics
+	@Query("""
+		       SELECT t.type, COALESCE(SUM(t.amount), 0)
+		       FROM Txn t
+		       WHERE t.user.id = :userId
+		       AND t.deleted = false
+		       AND t.time BETWEEN :startDate AND :endDate
+		       GROUP BY t.type
+		       """)
+		List<Object[]> getTotalsGroupedByType(
+		        Long userId,
+		        LocalDateTime startDate,
+		        LocalDateTime endDate
+		);
+	// txn count
+	@Query("""
+			SELECT COUNT(t)
+			FROM Txn t
+			WHERE t.user.id = :userId
+			AND t.deleted = false
+			AND t.time BETWEEN :startDate AND :endDate
+			""")
+	Long getTransactionCount(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
-	Page<Txn> findAllByUserId(Long userId, Pageable pageable);
-
-	Page<Txn> findAllByUserIdAndCategory(Long userId, TransactionCategory cat, Pageable pageable);
-
-	Page<Txn> findAllByUserIdAndType(Long userId, TransactionType tType, Pageable pageable);
-
-	Page<Txn> findAllByUserIdAndAmountBetween(Long userId, BigDecimal min, BigDecimal max, Pageable pageable);
-
-	Page<Txn> findAllByUserIdAndNoteContainingIgnoreCase(Long userId, String keyword, Pageable pageable);
-	
 }

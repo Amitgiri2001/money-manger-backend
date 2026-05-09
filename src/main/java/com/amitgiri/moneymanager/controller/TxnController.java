@@ -1,7 +1,6 @@
 package com.amitgiri.moneymanager.controller;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.YearMonth;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amitgiri.moneymanager.dto.ApiResponse;
+import com.amitgiri.moneymanager.dto.MonthlyAnalyticsDto;
+import com.amitgiri.moneymanager.dto.TxnFilterDto;
 import com.amitgiri.moneymanager.dto.TxnRequestDto;
 import com.amitgiri.moneymanager.dto.TxnResponseDto;
 import com.amitgiri.moneymanager.dto.UpdateTxnDto;
-import com.amitgiri.moneymanager.enums.TransactionCategory;
-import com.amitgiri.moneymanager.enums.TransactionType;
 import com.amitgiri.moneymanager.service.TxnService;
 
 import jakarta.validation.Valid;
@@ -45,45 +44,55 @@ public class TxnController {
 	}
 	
 	@GetMapping("/user/{id}")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getAllTransaction(@PathVariable Long id,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getAllTransaction(id,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully", resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
+	public ResponseEntity<
+	        ApiResponse<Page<TxnResponseDto>>
+	>
+	searchTransactions(
+	        @PathVariable Long id,
+	        TxnFilterDto filter,
+	        Pageable pageable
+	) {
+
+	    Page<TxnResponseDto> res =
+	            txnService.searchTransactions(
+	                    id,
+	                    filter,
+	                    pageable
+	            );
+
+	    return ResponseEntity.ok(
+	            new ApiResponse<>(
+	                    true,
+	                    "Transactions fetched successfully",
+	                    res
+	            )
+	    );
 	}
 	
-	@GetMapping("/user/{id}/date-range")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getTxnByDate(@PathVariable Long id,@RequestParam LocalDate sDate,@RequestParam LocalDate eDate,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getTransactionByDateRange(id,sDate,eDate,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully from date : "+sDate+" to Date "+eDate, resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
-	}
 	
-	@GetMapping("/user/{id}/amount-range")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getTxnByAmount(@PathVariable Long id,@RequestParam BigDecimal min,@RequestParam BigDecimal max,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getTransactionByAmountRange(id,min,max,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully from amount : "+min+" to amount "+max, resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
-	}
-	
-	@GetMapping("/user/{id}/category")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getTxnByCategory(@PathVariable Long id,@RequestParam TransactionCategory cat,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getTransactionByCategory(id,cat,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully for category : "+cat, resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
-	}
-	
-	@GetMapping("/user/{id}/type")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getTxnByType(@PathVariable Long id,@RequestParam TransactionType type,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getTransactionByType(id,type,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully for type : "+type, resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
-	}
-	
-	@GetMapping("/user/{id}/note")
-	public ResponseEntity<ApiResponse<Page<TxnResponseDto>>> getTxnByNote(@PathVariable Long id,@RequestParam String keyword,Pageable pageable) {
-		Page<TxnResponseDto> resDto = txnService.getTransactionByNote(id,keyword,pageable);
-		ApiResponse<Page<TxnResponseDto>> data = new ApiResponse<>(true, "All transaction fetched successfully for keyword : "+keyword, resDto);
-		return ResponseEntity.status(HttpStatus.OK).body(data);
+//	analytics
+	@GetMapping("/user/{id}/analytics/monthly")
+	public ResponseEntity<
+	        ApiResponse<MonthlyAnalyticsDto>
+	>
+	getMonthlyAnalytics(
+	        @PathVariable Long id,
+	        @RequestParam YearMonth month
+	) {
+
+	    MonthlyAnalyticsDto data =
+	            txnService.getMonthlyAnalytics(
+	                    id,
+	                    month
+	            );
+
+	    return ResponseEntity.ok(
+	            new ApiResponse<>(
+	                    true,
+	                    "Monthly analytics fetched successfully",
+	                    data
+	            )
+	    );
 	}
 	@PatchMapping("/{id}")
 	public ResponseEntity<ApiResponse<TxnResponseDto>> updateTxn(@PathVariable Long id,

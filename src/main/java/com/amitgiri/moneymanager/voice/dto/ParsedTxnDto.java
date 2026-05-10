@@ -1,4 +1,5 @@
-package com.amitgiri.moneymanager.dto;
+
+package com.amitgiri.moneymanager.voice.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,9 +12,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TxnResponseDto {
-
-    private Long id;
+public class ParsedTxnDto {
 
     private TransactionType type;
 
@@ -23,11 +22,13 @@ public class TxnResponseDto {
 
     private String note;
 
-    private Long userId;
-
     private LocalDateTime time;
-    
-    private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
+    private String originalCommand;
+
+    private boolean valid;
+
+    private String confirmationId;
+
+    private Long userId;
 }

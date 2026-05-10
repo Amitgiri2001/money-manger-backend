@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.amitgiri.moneymanager.enums.TransactionCategory;
@@ -27,9 +28,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@SQLRestriction("deleted = false")
 @Getter
 @Setter
 @NoArgsConstructor
+
 @Table(indexes= {
 		@Index(name="idx_user_id",columnList="user_id"),
 		@Index(name="idx_user_date",columnList="user_id, time")

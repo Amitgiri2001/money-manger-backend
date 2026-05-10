@@ -178,10 +178,6 @@ public class TxnServiceImpl implements TxnService {
 
 		dto.setTime(txn.getTime());
 
-		dto.setDeleted(txn.getDeleted());
-
-		dto.setDeletedAt(txn.getDeletedAt());
-
 		dto.setCreatedAt(txn.getCreatedAt());
 
 		dto.setUpdatedAt(txn.getUpdatedAt());

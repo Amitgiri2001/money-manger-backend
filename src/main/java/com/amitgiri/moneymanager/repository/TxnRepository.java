@@ -21,7 +21,6 @@ public interface TxnRepository extends JpaRepository<Txn, Long>, JpaSpecificatio
 		       SELECT t.type, COALESCE(SUM(t.amount), 0)
 		       FROM Txn t
 		       WHERE t.user.id = :userId
-		       AND t.deleted = false
 		       AND t.time BETWEEN :startDate AND :endDate
 		       GROUP BY t.type
 		       """)
@@ -35,7 +34,6 @@ public interface TxnRepository extends JpaRepository<Txn, Long>, JpaSpecificatio
 			SELECT COUNT(t)
 			FROM Txn t
 			WHERE t.user.id = :userId
-			AND t.deleted = false
 			AND t.time BETWEEN :startDate AND :endDate
 			""")
 	Long getTransactionCount(Long userId, LocalDateTime startDate, LocalDateTime endDate);

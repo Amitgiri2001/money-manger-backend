@@ -30,12 +30,7 @@ public class TxnSpecification {
                     )
             );
 
-//            predicates.add(
-//                    cb.equal(
-//                            root.get("deleted"),
-//                            false
-//                    )
-//            );
+
 
             if(filter.getType() != null) {
 

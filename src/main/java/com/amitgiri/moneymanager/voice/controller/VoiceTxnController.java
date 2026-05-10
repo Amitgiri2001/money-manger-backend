@@ -53,6 +53,7 @@ public class VoiceTxnController {
 	public ResponseEntity<?> confirmTransaction(@RequestBody ConfirmTxnDto dto) {
 
 		if (!dto.isConfirmed()) {
+			pendingTxnStore.remove(dto.getConfirmationId());
 
 			return ResponseEntity.ok(new ApiResponse<>(true, "Transaction cancelled", null));
 		}
@@ -64,6 +65,8 @@ public class VoiceTxnController {
 			return ResponseEntity.badRequest().body(new ApiResponse<>(false, "Invalid confirmation id", null));
 		}
 
+		applyConfirmedEdits(parsedTxn, dto);
+
 		TxnRequestDto requestDto = convert(parsedTxn);
 
 		TxnResponseDto savedTxn = txnService.createTxn(requestDto);
@@ -71,6 +74,33 @@ public class VoiceTxnController {
 		pendingTxnStore.remove(dto.getConfirmationId());
 
 		return ResponseEntity.ok(new ApiResponse<>(true, "Transaction created successfully", savedTxn));
+	}
+
+	private void applyConfirmedEdits(ParsedTxnDto parsedTxn, ConfirmTxnDto dto) {
+
+		if (dto.getType() != null) {
+			parsedTxn.setType(dto.getType());
+		}
+
+		if (dto.getAmount() != null) {
+			parsedTxn.setAmount(dto.getAmount());
+		}
+
+		if (dto.getCategory() != null) {
+			parsedTxn.setCategory(dto.getCategory());
+		}
+
+		if (dto.getNote() != null) {
+			parsedTxn.setNote(dto.getNote());
+		}
+
+		if (dto.getTime() != null) {
+			parsedTxn.setTime(dto.getTime());
+		}
+
+		if (dto.getUserId() != null) {
+			parsedTxn.setUserId(dto.getUserId());
+		}
 	}
 
 	private TxnRequestDto convert(ParsedTxnDto parsedTxn) {

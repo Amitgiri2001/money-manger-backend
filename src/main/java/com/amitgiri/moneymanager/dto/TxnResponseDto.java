@@ -19,6 +19,8 @@ public class TxnResponseDto {
 
     private BigDecimal amount;
 
+    private BigDecimal effectiveAmount;
+    
     private TransactionCategory category;
 
     private String note;

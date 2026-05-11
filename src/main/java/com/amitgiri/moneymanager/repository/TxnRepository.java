@@ -18,7 +18,7 @@ public interface TxnRepository extends JpaRepository<Txn, Long>, JpaSpecificatio
 
 	// analytics
 	@Query("""
-		       SELECT t.type, COALESCE(SUM(t.amount), 0)
+		       SELECT t.type, COALESCE(SUM(t.effectiveAmount), 0)
 		       FROM Txn t
 		       WHERE t.user.id = :userId
 		       AND t.time BETWEEN :startDate AND :endDate

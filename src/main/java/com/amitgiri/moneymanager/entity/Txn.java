@@ -50,6 +50,10 @@ public class Txn {
 	@Column(nullable=false,precision = 15, scale = 2)
 	private BigDecimal amount;
 	
+	@DecimalMin(value="0.00")
+	@Column(nullable=false,precision = 15, scale = 2)
+	private BigDecimal effectiveAmount;
+	
 	@Column(nullable=false)
 	@Enumerated(EnumType.STRING)
 	private TransactionCategory category;

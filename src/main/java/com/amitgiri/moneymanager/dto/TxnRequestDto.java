@@ -22,9 +22,13 @@ public class TxnRequestDto {
     private TransactionType type;
 
     @NotNull(message = "Amount is required")
-    @DecimalMin(value = "0.01")
-    @Digits(integer = 13, fraction = 2)
+    @DecimalMin(value = "0.00")
+    @Digits(integer = 15, fraction = 2)
     private BigDecimal amount;
+    
+    @DecimalMin(value = "0.00")
+    @Digits(integer = 15, fraction = 2)
+    private BigDecimal effectiveAmount;
 
     @NotNull(message = "Category is required")
     private TransactionCategory category;

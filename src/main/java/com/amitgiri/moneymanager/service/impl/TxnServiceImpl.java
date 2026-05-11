@@ -115,6 +115,13 @@ public class TxnServiceImpl implements TxnService {
 
 		if (dto.getAmount() != null) {
 			txn.setAmount(dto.getAmount());
+			if (dto.getEffectiveAmount() == null) {
+				txn.setEffectiveAmount(dto.getAmount());
+			}
+		}
+		
+		if(dto.getEffectiveAmount() != null) {
+			txn.setEffectiveAmount(dto.getEffectiveAmount());
 		}
 
 		if (dto.getCategory() != null) {
@@ -152,6 +159,7 @@ public class TxnServiceImpl implements TxnService {
 
 		txn.setType(dto.getType());
 		txn.setAmount(dto.getAmount());
+		txn.setEffectiveAmount(dto.getEffectiveAmount() != null?dto.getEffectiveAmount():dto.getAmount());
 		txn.setCategory(dto.getCategory());
 		txn.setNote(dto.getNote());
 		txn.setTime(dto.getTime());
@@ -169,6 +177,8 @@ public class TxnServiceImpl implements TxnService {
 		dto.setType(txn.getType());
 
 		dto.setAmount(txn.getAmount());
+		
+		dto.setEffectiveAmount(txn.getEffectiveAmount());
 
 		dto.setCategory(txn.getCategory());
 

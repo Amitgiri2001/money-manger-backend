@@ -17,9 +17,13 @@ public class UpdateTxnDto {
 
     private TransactionType type;
 
-    @DecimalMin(value = "0.01")
+    @DecimalMin(value = "0.00")
     @Digits(integer = 13, fraction = 2)
     private BigDecimal amount;
+    
+    @DecimalMin(value = "0.00")
+    @Digits(integer = 13, fraction = 2)
+    private BigDecimal effectiveAmount;
 
     private TransactionCategory category;
 

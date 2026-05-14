@@ -1,4 +1,4 @@
-CREATE TABLE txn_classification (
+CREATE TABLE IF NOT EXISTS txn_classification (
     id BIGSERIAL PRIMARY KEY,
 
     level VARCHAR(50) NOT NULL,

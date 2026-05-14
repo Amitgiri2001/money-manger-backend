@@ -1,3 +1,28 @@
+-- =========================================
+-- ADD NEW COLUMNS TO TXN
+-- =========================================
+
+ALTER TABLE txn
+ADD COLUMN IF NOT EXISTS type_classifier_id BIGINT;
+
+ALTER TABLE txn
+ADD COLUMN IF NOT EXISTS cat_classifier_id BIGINT;
+
+-- =========================================
+-- ADD FOREIGN KEYS
+-- =========================================
+
+ALTER TABLE txn
+ADD CONSTRAINT fk_txn_type_classifier
+FOREIGN KEY (type_classifier_id)
+REFERENCES txn_classification(id);
+
+
+ALTER TABLE txn
+ADD CONSTRAINT fk_txn_category_classifier
+FOREIGN KEY (cat_classifier_id)
+REFERENCES txn_classification(id);
+
 
 -- =========================
 -- UPDATE TYPE CLASSIFICATION
@@ -23,17 +48,4 @@ SET cat_classifier_id = (
     AND name = txn.category
 );
 
--- =========================
--- ADD FOREIGN KEY CONSTRAINTS
--- =========================
-/*
-ALTER TABLE txn
-ADD CONSTRAINT fk_txn_type_classifier
-FOREIGN KEY (type_classifier_id)
-REFERENCES txn_classification(id);
 
-ALTER TABLE txn
-ADD CONSTRAINT fk_txn_cat_classifier
-FOREIGN KEY (cat_classifier_id)
-REFERENCES txn_classification(id);
-*/

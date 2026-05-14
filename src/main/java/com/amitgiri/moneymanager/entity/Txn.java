@@ -72,7 +72,13 @@ public class Txn {
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	
+	@ManyToOne
+	@JoinColumn(name = "type_classifier_id")
+	private TxnClassification txnType;
+
+	@ManyToOne
+	@JoinColumn(name = "cat_classifier_id")
+	private TxnClassification txnCategory;
 	
 	@Column(nullable=true)
 	private LocalDateTime deletedAt;

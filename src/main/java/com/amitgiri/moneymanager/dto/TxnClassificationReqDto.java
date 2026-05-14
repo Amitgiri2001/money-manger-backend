@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class TxnClassificationReqDto {
 	@NotNull()
-	private Level lavel;
+	private Level level;
 	
 	@NotBlank()
 	private String name;

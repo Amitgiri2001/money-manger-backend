@@ -1,0 +1,38 @@
+psql postgres
+CREATE DATABASE money_manager;
+CREATE DATABASE money_manager;
+show dbs
+s
+;
+show dbs;
+show database;
+show databases;
+\q
+\l
+\q
+ALTER USER postgres PASSWORD 'password';
+SELECT current_user;
+ALTER USER amitgiri PASSWORD 'password';
+\q
+\c money_manager
+\d txn
+select * from txn;
+\q
+\d money-manager
+\c money-manager
+\c money_manager
+\d txn-classification
+\d txn_classification
+select * from txn_classification;
+SELECT * FROM flyway_schema_history;
+SELECT * FROM flyway_schema_history;
+select * from txn_classification;
+alter table txn_classification delete column lavel;
+alter table txn_classification drop column lavel;
+select * from txn_classification;
+select * from txn_classification;
+SELECT * FROM flyway_schema_history;
+select * from txn_classification;
+SELECT * FROM flyway_schema_history;
+select * from txn_classification;
+\s tables

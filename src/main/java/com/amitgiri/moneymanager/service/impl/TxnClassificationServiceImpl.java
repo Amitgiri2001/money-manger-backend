@@ -78,7 +78,7 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 	}
 	private TxnClassification mapReq(TxnClassificationReqDto dto,User user) {
 		TxnClassification txn=new TxnClassification();
-		txn.setLevel(dto.getLavel());
+		txn.setLevel(dto.getLevel());
 		txn.setName(dto.getName());
 		txn.setDescription(dto.getDescription());
 		txn.setCreatedBy(user);
@@ -88,10 +88,12 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 	private TxnClassificationResDto mapRes(TxnClassification txn) {
 		TxnClassificationResDto dto=new TxnClassificationResDto();
 		dto.setId(txn.getId());
-		dto.setLavel(txn.getLevel());
+		dto.setLevel(txn.getLevel());
 		dto.setName(txn.getName());
 		dto.setDescription(txn.getDescription());
-		dto.setCreatedBy(txn.getCreatedBy().getId());
+		if (txn.getCreatedBy() != null) {
+			dto.setCreatedBy(txn.getCreatedBy().getId());
+		}
 		dto.setCreateAt(txn.getCreatedAt());
 		dto.setUpdatedAt(txn.getUpdatedAt());
 		

@@ -16,10 +16,12 @@ import com.amitgiri.moneymanager.dto.TxnRequestDto;
 import com.amitgiri.moneymanager.dto.TxnResponseDto;
 import com.amitgiri.moneymanager.dto.UpdateTxnDto;
 import com.amitgiri.moneymanager.entity.Txn;
+import com.amitgiri.moneymanager.entity.TxnClassification;
 import com.amitgiri.moneymanager.entity.User;
 import com.amitgiri.moneymanager.enums.TransactionType;
 import com.amitgiri.moneymanager.exception.ResourceNotFoundException;
 import com.amitgiri.moneymanager.repository.TxnRepository;
+import com.amitgiri.moneymanager.service.TxnClassificationService;
 import com.amitgiri.moneymanager.service.TxnService;
 import com.amitgiri.moneymanager.service.UserService;
 import com.amitgiri.moneymanager.specification.TxnSpecification;
@@ -28,17 +30,23 @@ import com.amitgiri.moneymanager.specification.TxnSpecification;
 public class TxnServiceImpl implements TxnService {
 	private final TxnRepository txnRepo;
 	private final UserService userService;
-
-	public TxnServiceImpl(TxnRepository txnRepo, UserService userService) {
+	private final TxnClassificationService txnClassificationService;
+	public TxnServiceImpl(TxnRepository txnRepo, UserService userService,TxnClassificationService txnClassificationService) {
 		this.txnRepo = txnRepo;
 		this.userService = userService;
+		this.txnClassificationService=txnClassificationService;
 	}
 
 	@Override
 	public TxnResponseDto createTxn(TxnRequestDto dto) {
 		// check if user is valid User or not
 		User user = userService.getActiveUserOrThrow(dto.getUserId());
-		Txn txn = mapToTxnEntity(dto, user);
+		TxnClassification txnType =
+				txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
+
+		TxnClassification txnCategory =
+				txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
+		Txn txn = mapToTxnEntity(dto, user,txnType,txnCategory);
 		Txn saveTxn = txnRepo.save(txn);
 		return mapToTxnResponseDto(saveTxn);
 	}
@@ -153,14 +161,16 @@ public class TxnServiceImpl implements TxnService {
 		txnRepo.save(txn);
 	}
 
-	private Txn mapToTxnEntity(TxnRequestDto dto, User user) {
+	private Txn mapToTxnEntity(TxnRequestDto dto, User user,TxnClassification txnType,TxnClassification txnCategory) {
 
 		Txn txn = new Txn();
 
 		txn.setType(dto.getType());
+		txn.setTxnType(txnType);
 		txn.setAmount(dto.getAmount());
 		txn.setEffectiveAmount(dto.getEffectiveAmount() != null?dto.getEffectiveAmount():dto.getAmount());
 		txn.setCategory(dto.getCategory());
+		txn.setTxnCategory(txnCategory);
 		txn.setNote(dto.getNote());
 		txn.setTime(dto.getTime());
 		txn.setUser(user);
@@ -185,7 +195,11 @@ public class TxnServiceImpl implements TxnService {
 		dto.setNote(txn.getNote());
 
 		dto.setUserId(txn.getUser().getId());
-
+		
+		dto.setTxnType(txn.getTxnType());
+		
+		dto.setTxnCategory(txn.getTxnCategory());
+		
 		dto.setTime(txn.getTime());
 
 		dto.setCreatedAt(txn.getCreatedAt());

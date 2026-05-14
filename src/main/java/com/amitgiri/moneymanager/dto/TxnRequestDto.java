@@ -41,4 +41,11 @@ public class TxnRequestDto {
 
     @NotNull(message = "User ID is required")
     private Long userId;
+    
+    @NotNull(message = "Txn type ID is required")
+    private Long txnTypeId;
+    
+    @NotNull(message = "Txn category ID is required")
+    private Long txnCategoryId;
+    
 }

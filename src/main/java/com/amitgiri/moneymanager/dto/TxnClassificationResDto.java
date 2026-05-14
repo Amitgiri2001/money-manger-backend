@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class TxnClassificationResDto {
 	private Long id;
-	private Level lavel;
+	private Level level;
 	private String name;
 	private String description;
 	private Long createdBy;

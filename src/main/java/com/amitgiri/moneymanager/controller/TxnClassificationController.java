@@ -46,6 +46,13 @@ public class TxnClassificationController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(data);
 	}
 	
+	@GetMapping("/{userId}/types/{typeId}/categories")
+	public ResponseEntity<ApiResponse<List<TxnClassificationResDto>>> getCategoriesByType(@PathVariable Long userId,@PathVariable Long typeId){
+		List<TxnClassificationResDto> res=txnClassificationService.getCategoriesByType(userId, typeId);
+		ApiResponse<List<TxnClassificationResDto>> data= new ApiResponse<>(true,"All Category fetched",res);
+		return ResponseEntity.status(HttpStatus.CREATED).body(data);
+	}
+	
 	@PatchMapping("/{userId}/{txnClassifierId}")
 	public ResponseEntity<ApiResponse<TxnClassificationResDto>> update(@PathVariable Long userId,@PathVariable Long txnClassifierId,
 			@Valid @RequestBody UpdateTxnClassificationReqDto dto ){

@@ -23,4 +23,6 @@ public class TxnClassificationReqDto {
 	private String description;
 	
 	private Long createdBy;
+	
+	private Long parentId;
 }

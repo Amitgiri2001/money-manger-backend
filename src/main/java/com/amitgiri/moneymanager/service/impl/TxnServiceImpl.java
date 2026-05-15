@@ -19,6 +19,8 @@ import com.amitgiri.moneymanager.dto.UpdateTxnDto;
 import com.amitgiri.moneymanager.entity.Txn;
 import com.amitgiri.moneymanager.entity.TxnClassification;
 import com.amitgiri.moneymanager.entity.User;
+import com.amitgiri.moneymanager.enums.Level;
+import com.amitgiri.moneymanager.enums.TransactionType;
 import com.amitgiri.moneymanager.exception.ResourceNotFoundException;
 import com.amitgiri.moneymanager.repository.TxnRepository;
 import com.amitgiri.moneymanager.service.TxnClassificationService;
@@ -44,8 +46,11 @@ public class TxnServiceImpl implements TxnService {
 		// check if user is valid User or not
 		User user = userService.getActiveUserOrThrow(dto.getUserId());
 		TxnClassification txnType = txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
-
 		TxnClassification txnCategory = txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
+
+		validateClassificationLevels(txnType, txnCategory);
+		validateCategoryTypeRelationship(txnType, txnCategory);
+
 		Txn txn = mapToTxnEntity(dto, user, txnType, txnCategory);
 		Txn saveTxn = txnRepo.save(txn);
 		return mapToTxnResponseDto(saveTxn);
@@ -111,8 +116,11 @@ public class TxnServiceImpl implements TxnService {
 
 		Txn txn = getActiveTxnOrThrow(id);
 
+		TxnClassification txnType = txn.getTxnType();
+		TxnClassification txnCategory = txn.getTxnCategory();
+
 		if (dto.getTxnTypeId() != null) {
-			TxnClassification txnType = txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
+			txnType = txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
 			txn.setTxnType(txnType);
 		}
 
@@ -128,8 +136,14 @@ public class TxnServiceImpl implements TxnService {
 		}
 
 		if (dto.getTxnCategoryId() != null) {
-			TxnClassification txnCategory = txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
+			txnCategory = txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
 			txn.setTxnCategory(txnCategory);
+		}
+
+		// Re-validate relationship if either changed
+		if (dto.getTxnTypeId() != null || dto.getTxnCategoryId() != null) {
+			validateClassificationLevels(txnType, txnCategory);
+			validateCategoryTypeRelationship(txnType, txnCategory);
 		}
 
 		if (dto.getNote() != null) {
@@ -187,11 +201,12 @@ public class TxnServiceImpl implements TxnService {
 		dto.setUserId(txn.getUser().getId());
 
 		if (txn.getTxnType() != null) {
-	        dto.setTxnType(mapToClassificationResDto(txn.getTxnType()));
-	    }
-	    if (txn.getTxnCategory() != null) {
-	        dto.setTxnCategory(mapToClassificationResDto(txn.getTxnCategory()));
-	    }
+			dto.setTxnType(mapToClassificationResDto(txn.getTxnType()));
+		}
+
+		if (txn.getTxnCategory() != null) {
+			dto.setTxnCategory(mapToClassificationResDto(txn.getTxnCategory()));
+		}
 
 		dto.setTime(txn.getTime());
 
@@ -211,6 +226,24 @@ public class TxnServiceImpl implements TxnService {
 		}
 		return txn;
 	}
+
+	private void validateClassificationLevels(TxnClassification type, TxnClassification category) {
+		if (type.getLevel() != Level.TYPE) {
+			throw new IllegalArgumentException("Selected type '" + type.getName() + "' is not a valid transaction TYPE.");
+		}
+		if (category.getLevel() != Level.CATEGORY) {
+			throw new IllegalArgumentException(
+					"Selected category '" + category.getName() + "' is not a valid transaction CATEGORY.");
+		}
+	}
+
+	private void validateCategoryTypeRelationship(TxnClassification type, TxnClassification category) {
+		if (category.getParent() != null && !category.getParent().getId().equals(type.getId())) {
+			throw new IllegalArgumentException("The selected category '" + category.getName()
+					+ "' does not belong to the selected type '" + type.getName() + "'.");
+		}
+	}
+
 	private TxnClassificationResDto mapToClassificationResDto(TxnClassification entity) {
 	    TxnClassificationResDto res = new TxnClassificationResDto();
 	    res.setId(entity.getId());

@@ -43,7 +43,16 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 				.collect(Collectors.toList());
 		return fetchedTxnRes;
 	}
-	
+	@Override
+	public List<TxnClassificationResDto> getCategoriesByType(Long userId,Long typeId) {
+
+		List<TxnClassification> categories =
+				txnClassRepo.findCategoriesByType(userId,typeId);
+
+		return categories.stream()
+				.map(this::mapRes)
+				.toList();
+	}
 	@Override
 	public TxnClassificationResDto update(Long userId,Long txnClassifierId,UpdateTxnClassificationReqDto dto){
 		User user = userService.getActiveUserOrThrow(dto.getCreatedBy());
@@ -90,6 +99,17 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 		txn.setDescription(dto.getDescription());
 		txn.setCreatedBy(user);
 		
+		if (dto.getParentId() != null) {
+			if (dto.getLevel() == Level.TYPE) {
+				throw new IllegalArgumentException("A transaction TYPE cannot have a parent.");
+			}
+			TxnClassification parent = findTxnByIdOrThrow(dto.getParentId());
+			if (parent.getLevel() != Level.TYPE) {
+				throw new IllegalArgumentException("The parent of a CATEGORY must be a TYPE.");
+			}
+			txn.setParent(parent);
+		}
+		
 		return txn;
 	}
 	private TxnClassificationResDto mapRes(TxnClassification txn) {
@@ -100,6 +120,9 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 		dto.setDescription(txn.getDescription());
 		if (txn.getCreatedBy() != null) {
 			dto.setCreatedBy(txn.getCreatedBy().getId());
+		}
+		if (txn.getParent() != null) {
+			dto.setParentId(txn.getParent().getId());
 		}
 		dto.setCreateAt(txn.getCreatedAt());
 		dto.setUpdatedAt(txn.getUpdatedAt());

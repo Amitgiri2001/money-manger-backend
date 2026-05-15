@@ -44,6 +44,10 @@ public class TxnClassification {
 	@JoinColumn(name="user_id")
 	private User createdBy;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "parent_id")
+	private TxnClassification parent;
+	
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 	

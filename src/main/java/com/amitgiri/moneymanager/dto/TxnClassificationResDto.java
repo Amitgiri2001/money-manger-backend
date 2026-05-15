@@ -16,6 +16,7 @@ public class TxnClassificationResDto {
 	private String name;
 	private String description;
 	private Long createdBy;
+	private Long parentId;
 	private LocalDateTime createAt;
 	private LocalDateTime updatedAt;
 

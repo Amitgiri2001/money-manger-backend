@@ -21,4 +21,6 @@ public interface TxnClassificationService {
 
 	TxnClassification findTxnByNameOrThrow(String string);
 
+	List<TxnClassificationResDto> getCategoriesByType(Long userId, Long typeId);
+
 }

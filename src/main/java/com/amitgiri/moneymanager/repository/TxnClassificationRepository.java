@@ -24,4 +24,14 @@ public interface TxnClassificationRepository extends JpaRepository<TxnClassifica
 		);
 
 	TxnClassification findByName(String upperCase);
+	@Query("""
+			SELECT t
+			FROM TxnClassification t
+			WHERE t.parent.id = :typeId
+			AND (
+				t.createdBy IS NULL
+				OR t.createdBy.id = :userId
+			)
+		""")
+		List<TxnClassification> findCategoriesByType(Long userId,Long typeId);
 }

@@ -41,6 +41,12 @@ public class GlobalExceptionHandler {
 		// log ex.getStackStrace
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+		ApiResponse<Object> response = new ApiResponse<>(false, ex.getMessage(), null);
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+	}
 	
 	//general exp
 	@ExceptionHandler(Exception.class)

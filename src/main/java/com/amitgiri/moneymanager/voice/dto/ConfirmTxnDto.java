@@ -17,15 +17,15 @@ public class ConfirmTxnDto {
 
     private boolean confirmed;
 
-    private TransactionType type;
-
     private BigDecimal amount;
-
-    private TransactionCategory category;
 
     private String note;
 
     private LocalDateTime time;
 
     private Long userId;
+    
+    private Long txnTypeId;
+
+	private Long txnCategoryId;
 }

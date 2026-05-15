@@ -13,10 +13,6 @@ import lombok.Setter;
 @Setter
 public class TxnFilterDto {
 
-    private TransactionType type;
-
-    private TransactionCategory category;
-
     private BigDecimal minAmount;
 
     private BigDecimal maxAmount;
@@ -26,4 +22,8 @@ public class TxnFilterDto {
     private LocalDate endDate;
 
     private String keyword;
+    
+    private Long txnTypeId;
+
+	private Long txnCategoryId;
 }

@@ -19,4 +19,6 @@ public interface TxnClassificationService {
 
 	TxnClassification findTxnByIdOrThrow(Long txnTypeId);
 
+	TxnClassification findTxnByNameOrThrow(String string);
+
 }

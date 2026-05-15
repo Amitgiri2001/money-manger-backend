@@ -4,6 +4,7 @@ package com.amitgiri.moneymanager.voice.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.amitgiri.moneymanager.entity.TxnClassification;
 import com.amitgiri.moneymanager.enums.TransactionCategory;
 import com.amitgiri.moneymanager.enums.TransactionType;
 
@@ -13,12 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ParsedTxnDto {
-
-    private TransactionType type;
-
     private BigDecimal amount;
-
-    private TransactionCategory category;
 
     private String note;
 
@@ -31,4 +27,8 @@ public class ParsedTxnDto {
     private String confirmationId;
 
     private Long userId;
+    
+    private Long txnTypeId;
+
+	private Long txnCategoryId;
 }

@@ -32,22 +32,16 @@ public class TxnSpecification {
 
 
 
-            if(filter.getType() != null) {
-
-                predicates.add(
-                        cb.equal(
-                                root.get("type"),
-                                filter.getType()
-                        )
-                );
+            if(filter.getTxnTypeId() != null) {
+                predicates.add(cb.equal(root.get("txnType").get("id"), filter.getTxnTypeId()));
             }
 
-            if(filter.getCategory() != null) {
+            if(filter.getTxnCategoryId() != null) {
 
                 predicates.add(
                         cb.equal(
-                                root.get("category"),
-                                filter.getCategory()
+                                root.get("category").get("id"),
+                                filter.getTxnCategoryId()
                         )
                 );
             }

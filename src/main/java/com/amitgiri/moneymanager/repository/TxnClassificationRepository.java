@@ -22,4 +22,6 @@ public interface TxnClassificationRepository extends JpaRepository<TxnClassifica
 			Long userId,
 			Level level
 		);
+
+	TxnClassification findByName(String upperCase);
 }

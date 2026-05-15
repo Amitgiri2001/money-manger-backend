@@ -18,9 +18,6 @@ import lombok.Setter;
 @Setter
 public class TxnRequestDto {
 
-    @NotNull(message = "Txn type is required")
-    private TransactionType type;
-
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.00")
     @Digits(integer = 15, fraction = 2)
@@ -29,9 +26,6 @@ public class TxnRequestDto {
     @DecimalMin(value = "0.00")
     @Digits(integer = 15, fraction = 2)
     private BigDecimal effectiveAmount;
-
-    @NotNull(message = "Category is required")
-    private TransactionCategory category;
 
     @Size(max = 100)
     private String note;

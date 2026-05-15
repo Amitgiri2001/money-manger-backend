@@ -1,0 +1,6 @@
+--drop columns
+ALTER TABLE txn
+DROP COLUMN IF EXISTS type;
+
+ALTER TABLE txn
+DROP COLUMN IF EXISTS category;

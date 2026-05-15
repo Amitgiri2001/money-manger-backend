@@ -40,7 +40,7 @@ public class VoiceCommandParser {
 
 		// validation
 		dto.setValid(
-				dto.getType() != null && dto.getAmount() != null && dto.getCategory() != null && dto.getTime() != null);
+				dto.getTxnTypeId() != null && dto.getAmount() != null && dto.getTxnCategoryId() != null && dto.getTime() != null);
 
 		return dto;
 	}

@@ -8,14 +8,13 @@ import com.amitgiri.moneymanager.enums.TransactionType;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class UpdateTxnDto {
-
-    private TransactionType type;
 
     @DecimalMin(value = "0.00")
     @Digits(integer = 13, fraction = 2)
@@ -25,9 +24,11 @@ public class UpdateTxnDto {
     @Digits(integer = 13, fraction = 2)
     private BigDecimal effectiveAmount;
 
-    private TransactionCategory category;
-
     private String note;
 
     private LocalDateTime time;
+    
+    private Long txnTypeId;
+    
+    private Long txnCategoryId;
 }

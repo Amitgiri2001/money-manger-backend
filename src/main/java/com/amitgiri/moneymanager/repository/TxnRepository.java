@@ -18,11 +18,11 @@ public interface TxnRepository extends JpaRepository<Txn, Long>, JpaSpecificatio
 
 	// analytics
 	@Query("""
-		       SELECT t.type, COALESCE(SUM(t.effectiveAmount), 0)
+		       SELECT t.txnType.name, COALESCE(SUM(t.effectiveAmount), 0)
 		       FROM Txn t
 		       WHERE t.user.id = :userId
 		       AND t.time BETWEEN :startDate AND :endDate
-		       GROUP BY t.type
+		       GROUP BY t.txnType.name
 		       """)
 		List<Object[]> getTotalsGroupedByType(
 		        Long userId,

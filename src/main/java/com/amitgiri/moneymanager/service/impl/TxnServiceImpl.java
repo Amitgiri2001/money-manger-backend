@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.amitgiri.moneymanager.dto.MonthlyAnalyticsDto;
+import com.amitgiri.moneymanager.dto.TxnClassificationResDto;
 import com.amitgiri.moneymanager.dto.TxnFilterDto;
 import com.amitgiri.moneymanager.dto.TxnRequestDto;
 import com.amitgiri.moneymanager.dto.TxnResponseDto;
@@ -18,7 +19,6 @@ import com.amitgiri.moneymanager.dto.UpdateTxnDto;
 import com.amitgiri.moneymanager.entity.Txn;
 import com.amitgiri.moneymanager.entity.TxnClassification;
 import com.amitgiri.moneymanager.entity.User;
-import com.amitgiri.moneymanager.enums.TransactionType;
 import com.amitgiri.moneymanager.exception.ResourceNotFoundException;
 import com.amitgiri.moneymanager.repository.TxnRepository;
 import com.amitgiri.moneymanager.service.TxnClassificationService;
@@ -31,22 +31,22 @@ public class TxnServiceImpl implements TxnService {
 	private final TxnRepository txnRepo;
 	private final UserService userService;
 	private final TxnClassificationService txnClassificationService;
-	public TxnServiceImpl(TxnRepository txnRepo, UserService userService,TxnClassificationService txnClassificationService) {
+
+	public TxnServiceImpl(TxnRepository txnRepo, UserService userService,
+			TxnClassificationService txnClassificationService) {
 		this.txnRepo = txnRepo;
 		this.userService = userService;
-		this.txnClassificationService=txnClassificationService;
+		this.txnClassificationService = txnClassificationService;
 	}
 
 	@Override
 	public TxnResponseDto createTxn(TxnRequestDto dto) {
 		// check if user is valid User or not
 		User user = userService.getActiveUserOrThrow(dto.getUserId());
-		TxnClassification txnType =
-				txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
+		TxnClassification txnType = txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
 
-		TxnClassification txnCategory =
-				txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
-		Txn txn = mapToTxnEntity(dto, user,txnType,txnCategory);
+		TxnClassification txnCategory = txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
+		Txn txn = mapToTxnEntity(dto, user, txnType, txnCategory);
 		Txn saveTxn = txnRepo.save(txn);
 		return mapToTxnResponseDto(saveTxn);
 	}
@@ -73,36 +73,30 @@ public class TxnServiceImpl implements TxnService {
 
 		LocalDateTime endDate = month.atEndOfMonth().atTime(23, 59, 59);
 
-		List<Object[]> res= txnRepo.getTotalsGroupedByType(userId, startDate, endDate);
+		List<Object[]> res = txnRepo.getTotalsGroupedByType(userId, startDate, endDate);
 		BigDecimal totalIncome = BigDecimal.ZERO;
 		BigDecimal totalExpense = BigDecimal.ZERO;
 		BigDecimal totalInvestment = BigDecimal.ZERO;
 		BigDecimal totalLoan = BigDecimal.ZERO;
 
-		for(Object[] row : res) {
+		for (Object[] row : res) {
 
-		    TransactionType type =
-		            (TransactionType) row[0];
+			String type = (String) row[0];
 
-		    BigDecimal total =
-		            (BigDecimal) row[1];
+			BigDecimal total = (BigDecimal) row[1];
 
-		    switch(type) {
+			switch (type.toUpperCase()) {
 
-		        case INCOME ->
-		                totalIncome = total;
+			case "INCOME" -> totalIncome = total;
 
-		        case EXPENSE ->
-		                totalExpense = total;
+			case "EXPENSE" -> totalExpense = total;
 
-		        case INVESTMENT ->
-		                totalInvestment = total;
+			case "INVESTMENT" -> totalInvestment = total;
 
-		        case LOAN ->
-		                totalLoan = total;
-		    }
+			case "LOAN" -> totalLoan = total;
+			}
 		}
-		
+
 		Long transactionCount = txnRepo.getTransactionCount(userId, startDate, endDate);
 
 		BigDecimal effectiveBalance = totalIncome.subtract(totalExpense);
@@ -117,8 +111,9 @@ public class TxnServiceImpl implements TxnService {
 
 		Txn txn = getActiveTxnOrThrow(id);
 
-		if (dto.getType() != null) {
-			txn.setType(dto.getType());
+		if (dto.getTxnTypeId() != null) {
+			TxnClassification txnType = txnClassificationService.findTxnByIdOrThrow(dto.getTxnTypeId());
+			txn.setTxnType(txnType);
 		}
 
 		if (dto.getAmount() != null) {
@@ -127,13 +122,14 @@ public class TxnServiceImpl implements TxnService {
 				txn.setEffectiveAmount(dto.getAmount());
 			}
 		}
-		
-		if(dto.getEffectiveAmount() != null) {
+
+		if (dto.getEffectiveAmount() != null) {
 			txn.setEffectiveAmount(dto.getEffectiveAmount());
 		}
 
-		if (dto.getCategory() != null) {
-			txn.setCategory(dto.getCategory());
+		if (dto.getTxnCategoryId() != null) {
+			TxnClassification txnCategory = txnClassificationService.findTxnByIdOrThrow(dto.getTxnCategoryId());
+			txn.setTxnCategory(txnCategory);
 		}
 
 		if (dto.getNote() != null) {
@@ -161,15 +157,13 @@ public class TxnServiceImpl implements TxnService {
 		txnRepo.save(txn);
 	}
 
-	private Txn mapToTxnEntity(TxnRequestDto dto, User user,TxnClassification txnType,TxnClassification txnCategory) {
+	private Txn mapToTxnEntity(TxnRequestDto dto, User user, TxnClassification txnType, TxnClassification txnCategory) {
 
 		Txn txn = new Txn();
 
-		txn.setType(dto.getType());
 		txn.setTxnType(txnType);
 		txn.setAmount(dto.getAmount());
-		txn.setEffectiveAmount(dto.getEffectiveAmount() != null?dto.getEffectiveAmount():dto.getAmount());
-		txn.setCategory(dto.getCategory());
+		txn.setEffectiveAmount(dto.getEffectiveAmount() != null ? dto.getEffectiveAmount() : dto.getAmount());
 		txn.setTxnCategory(txnCategory);
 		txn.setNote(dto.getNote());
 		txn.setTime(dto.getTime());
@@ -184,22 +178,21 @@ public class TxnServiceImpl implements TxnService {
 
 		dto.setId(txn.getId());
 
-		dto.setType(txn.getType());
-
 		dto.setAmount(txn.getAmount());
-		
-		dto.setEffectiveAmount(txn.getEffectiveAmount());
 
-		dto.setCategory(txn.getCategory());
+		dto.setEffectiveAmount(txn.getEffectiveAmount());
 
 		dto.setNote(txn.getNote());
 
 		dto.setUserId(txn.getUser().getId());
-		
-		dto.setTxnType(txn.getTxnType());
-		
-		dto.setTxnCategory(txn.getTxnCategory());
-		
+
+		if (txn.getTxnType() != null) {
+	        dto.setTxnType(mapToClassificationResDto(txn.getTxnType()));
+	    }
+	    if (txn.getTxnCategory() != null) {
+	        dto.setTxnCategory(mapToClassificationResDto(txn.getTxnCategory()));
+	    }
+
 		dto.setTime(txn.getTime());
 
 		dto.setCreatedAt(txn.getCreatedAt());
@@ -217,5 +210,13 @@ public class TxnServiceImpl implements TxnService {
 			throw new ResourceNotFoundException("Transaction already deleted with id : " + id);
 		}
 		return txn;
+	}
+	private TxnClassificationResDto mapToClassificationResDto(TxnClassification entity) {
+	    TxnClassificationResDto res = new TxnClassificationResDto();
+	    res.setId(entity.getId());
+	    res.setName(entity.getName());
+	    res.setLevel(entity.getLevel());
+	    res.setDescription(entity.getDescription());
+	    return res;
 	}
 }

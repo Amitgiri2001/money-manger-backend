@@ -76,10 +76,17 @@ public class TxnClassificationServiceImpl implements TxnClassificationService{
 		TxnClassification txn=txnClassRepo.findById(txnId).orElseThrow(()->new ResourceNotFoundException("Transaction Classifier not found with id : " + txnId));
 		return txn;
 	}
+	public TxnClassification findTxnByNameOrThrow(String txnName) {
+		TxnClassification txn=txnClassRepo.findByName(txnName.toUpperCase());
+		if(txn==null) {
+			throw new ResourceNotFoundException("Transaction Classifier not found with name : \" + txnName");
+		}
+		return txn;
+	}
 	private TxnClassification mapReq(TxnClassificationReqDto dto,User user) {
 		TxnClassification txn=new TxnClassification();
 		txn.setLevel(dto.getLevel());
-		txn.setName(dto.getName());
+		txn.setName(dto.getName().toUpperCase());
 		txn.setDescription(dto.getDescription());
 		txn.setCreatedBy(user);
 		

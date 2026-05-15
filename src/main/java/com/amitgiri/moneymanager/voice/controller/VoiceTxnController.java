@@ -78,16 +78,16 @@ public class VoiceTxnController {
 
 	private void applyConfirmedEdits(ParsedTxnDto parsedTxn, ConfirmTxnDto dto) {
 
-		if (dto.getType() != null) {
-			parsedTxn.setType(dto.getType());
+		if (dto.getTxnTypeId() != null) {
+			parsedTxn.setTxnTypeId(dto.getTxnTypeId());
 		}
 
 		if (dto.getAmount() != null) {
 			parsedTxn.setAmount(dto.getAmount());
 		}
 
-		if (dto.getCategory() != null) {
-			parsedTxn.setCategory(dto.getCategory());
+		if (dto.getTxnCategoryId() != null) {
+			parsedTxn.setTxnCategoryId(dto.getTxnCategoryId());
 		}
 
 		if (dto.getNote() != null) {
@@ -107,11 +107,11 @@ public class VoiceTxnController {
 
 		TxnRequestDto dto = new TxnRequestDto();
 
-		dto.setType(parsedTxn.getType());
+		dto.setTxnTypeId(parsedTxn.getTxnTypeId());
 
 		dto.setAmount(parsedTxn.getAmount());
 
-		dto.setCategory(parsedTxn.getCategory());
+		dto.setTxnCategoryId(parsedTxn.getTxnCategoryId());
 
 		dto.setNote(parsedTxn.getNote());
 
